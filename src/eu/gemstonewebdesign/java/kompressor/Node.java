@@ -1,13 +1,17 @@
 package eu.gemstonewebdesign.java.kompressor;
 
-public class Node implements Comparable<Node>
+import java.io.Serializable;
+
+public class Node implements Comparable<Node>, Serializable
 {
-	private byte data;
-	private long weight;
-	private boolean leaf = true; // leaves are leaf by default
+	private static final long serialVersionUID = 1L;
 	
-	private Node left = null;
-	private Node right = null;
+	private final byte data;
+	private final long weight;
+	private final boolean leaf; // leaves are leaf by default
+	
+	private final Node left;
+	private final Node right;
 	private Node parent = null;
 	
 	/**
@@ -19,6 +23,9 @@ public class Node implements Comparable<Node>
 	{
 		this.data = data;
 		this.weight = weight;
+		this.leaf = true;
+		this.left = null;
+		this.right = null;
 	}
 	
 	/**
@@ -30,6 +37,7 @@ public class Node implements Comparable<Node>
 	{
 		this.left = left;
 		this.right = right;
+		this.data = -1;
 		this.leaf = false;
 		this.weight = this.left.getWeight() + this.right.getWeight();
 		this.left.setParent(this);

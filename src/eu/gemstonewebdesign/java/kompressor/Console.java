@@ -3,6 +3,8 @@ package eu.gemstonewebdesign.java.kompressor;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Console
 {
@@ -63,7 +65,7 @@ public class Console
 			
 			try
 			{
-				ConsoleCmd cmd = ConsoleCmd.parse(reader.readLine());
+				ConsoleCmd cmd = ConsoleCmd.parse(reader.readLine(), cmd_no);
 				
 				String command = cmd.getCmd();
 				if ( command.equals("exit") )
@@ -79,41 +81,57 @@ public class Console
 					else
 					{
 						String filename = cmd.fileName();
-						
 						Kompressor kompressor = new Kompressor();
-						
 						kompressor.setAction(KompressorAction.KOMPRESS, filename);
-						
 						kompressor.setTarget(filename);
-						
 						kompressor.setMode(KompressorMode.FILE);
-						
 						kompressor.assignCmdNo(cmd_no);
-						
 						System.out.println("["+cmd_no+"]sys: Kompressing...");
-						
-						kompressor.run();
-						
-						// TODO: check results periodically
+						kompressor.start();
+						kompressor.join();
 					}
 				}
-				else if ( command.equals("kompress_multi_list") )
+				else if ( command.equals("kompress_multi") )
 				{
-					
-				}
-				else if ( command.equals("kompress_multi_inline") )
-				{
-					
+					String[] filenames = checkFilenamesForMultipleOccurences(cmd.fileNames());
+					Kompressor[] kompressors = new Kompressor[filenames.length];
+					int i = 0;
+					System.out.println("["+cmd_no+"]sys: Kompressing multiple files...");
+					for (String filename : filenames)
+					{
+						kompressors[i] = new Kompressor();
+						kompressors[i].setAction(KompressorAction.KOMPRESS, filename);
+						kompressors[i].setTarget(filename);
+						kompressors[i].setMode(KompressorMode.FILE);
+						kompressors[i].assignCmdNo(cmd_no);
+						kompressors[i++].start();
+					}
+					// since all are started, now wait for them to join the main thread
+					for (Kompressor kompressor : kompressors)
+					{
+						kompressor.join();
+					}
 				}
 				else if ( command.equals("dekompress_single") )
 				{
-					
+					if (cmd.countFileNames() < 1)
+					{
+						System.out.println("["+cmd_no+"]err: No file specified");
+					}
+					else
+					{
+						String filename = cmd.fileName();
+						Kompressor kompressor = new Kompressor();
+						kompressor.setAction(KompressorAction.DEKOMPRESS, filename);
+						kompressor.setTarget(filename);
+						kompressor.setMode(KompressorMode.FILE);
+						kompressor.assignCmdNo(cmd_no);
+						System.out.println("["+cmd_no+"]sys: Dekompressing...");
+						kompressor.start();
+						kompressor.join();
+					}
 				}
-				else if ( command.equals("dekompress_multi_list") )
-				{
-					
-				}
-				else if ( command.equals("dekompress_multi_inline") )
+				else if ( command.equals("dekompress_multi") )
 				{
 					
 				}
@@ -126,6 +144,11 @@ public class Console
 			{
 				System.out.println("["+cmd_no+"]err: Read failed, retry");
 			}
+			catch (InterruptedException e)
+			{
+				System.out.println("["+cmd_no+"]err: " + e.getMessage());
+				e.printStackTrace();
+			}
 		} while (proceed);
 
 		try
@@ -135,5 +158,20 @@ public class Console
 		catch (IOException e) {}
 		
 		System.out.println("Kompressor exited peacefully");
+	}
+
+	private static String[] checkFilenamesForMultipleOccurences(String[] filenames)
+	{
+		List<String> checked_filenames = new ArrayList<String>();
+		for (String filename : filenames)
+		{
+			if ( ! checked_filenames.contains(filename))
+			{
+				checked_filenames.add(filename);
+			}
+		}
+		String[] names = new String[checked_filenames.size()];
+		checked_filenames.toArray(names);
+		return names;
 	}
 }
