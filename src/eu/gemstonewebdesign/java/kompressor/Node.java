@@ -7,6 +7,7 @@ public class Node implements Comparable<Node>, Serializable
 	private static final long serialVersionUID = 1L;
 	
 	private final byte data;
+	private final char cdata;
 	private final long weight;
 	private final boolean leaf; // leaves are leaf by default
 	
@@ -22,6 +23,7 @@ public class Node implements Comparable<Node>, Serializable
 	public Node(byte data, long weight)
 	{
 		this.data = data;
+		this.cdata = (char) data;
 		this.weight = weight;
 		this.leaf = true;
 		this.left = null;
@@ -38,6 +40,7 @@ public class Node implements Comparable<Node>, Serializable
 		this.left = left;
 		this.right = right;
 		this.data = -1;
+		this.cdata = '0';
 		this.leaf = false;
 		this.weight = this.left.getWeight() + this.right.getWeight();
 		this.left.setParent(this);

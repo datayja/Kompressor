@@ -210,6 +210,7 @@ public class Kompressor extends Thread
 			long bit_counter = 0;
 			long byte_counter = 0;
 			
+			// pokud je kořenem stromu list, pak je jediný v celém stromu
 			if (current_node.isLeaf())
 			{
 				for (long i = 0; i < metadata.dekompressedByteCount(); i++)
@@ -254,6 +255,7 @@ public class Kompressor extends Thread
 					{
 						byte_counter++;
 						dekompressed_file_writer.write(current_node.getData());
+						System.out.print("new byte: "+current_node.getData());
 						current_node = tree; // reset
 					}
 				}

@@ -21,7 +21,7 @@ public class Reader
 
 	public Boolean read() throws IOException
 	{
-		if ((this.read_bytes == 0) || (this.read_bytes == -1))
+		if (this.read_bytes == -1)
 		{
 			// pokud už není co číst, vrátit null
 			return null;
