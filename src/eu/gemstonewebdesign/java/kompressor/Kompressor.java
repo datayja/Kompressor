@@ -380,9 +380,9 @@ public class Kompressor extends Thread
 			}
 			
 			// test output file - metadata
-			if (!kompressed_file_tree.exists())
+			if ( ! kompressed_file_tree.exists())
 			{
-				if (!kompressed_file_tree.createNewFile())
+				if ( ! kompressed_file_tree.createNewFile())
 				{
 					System.err.println(this.cmdIdentifier()
 							+ "err: Could not create output file: " + to

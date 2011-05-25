@@ -133,7 +133,24 @@ public class Console
 				}
 				else if ( command.equals("dekompress_multi") )
 				{
-					
+					String[] filenames = checkFilenamesForMultipleOccurences(cmd.fileNames());
+					Kompressor[] kompressors = new Kompressor[filenames.length];
+					int i = 0;
+					System.out.println("["+cmd_no+"]sys: Dekompressing multiple files...");
+					for (String filename : filenames)
+					{
+						kompressors[i] = new Kompressor();
+						kompressors[i].setAction(KompressorAction.DEKOMPRESS, filename);
+						kompressors[i].setTarget(filename);
+						kompressors[i].setMode(KompressorMode.FILE);
+						kompressors[i].assignCmdNo(cmd_no);
+						kompressors[i++].start();
+					}
+					// since all are started, now wait for them to join the main thread
+					for (Kompressor kompressor : kompressors)
+					{
+						kompressor.join();
+					}
 				}
 				else
 				{

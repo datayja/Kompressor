@@ -23,7 +23,7 @@ public class Reader
 	{
 		if ((this.read_bytes == 0) || (this.read_bytes == -1))
 		{
-			System.out.println("Reader: read zero bytes");
+			// pokud už není co číst, vrátit null
 			return null;
 		}
 		else 
@@ -32,7 +32,6 @@ public class Reader
 			if (this.current_byte == -1)
 			{
 				this.read_bytes = this.reader.read(this.in);
-				System.out.println("Reader: reading "+this.read_bytes+" bytes");
 				this.current_byte++;
 				return this.read();
 			}
@@ -41,8 +40,7 @@ public class Reader
 			{
 				// najdeme si poslední bit
 				byte bit = (byte) (this.in[this.current_byte] & this.leftmostbit);
-				System.out.println("Reader: byte "+this.current_byte+", bit "+this.current_bit+": "+Integer.toBinaryString(this.in[this.current_byte])); 
-				
+
 				// posuneme doprava
 				this.in[this.current_byte] <<= 1;
 				this.current_bit++;
@@ -51,27 +49,24 @@ public class Reader
 				if (this.current_bit == 8)
 				{
 					this.current_bit = 0;
-
 					this.current_byte++;
-					System.out.println("Reader: next byte: "+this.current_byte);
+
 					if (
 						(this.current_byte == (Kompressor.read_byte_buffer_size - 1)) 
 						||
 						(this.current_byte == this.read_bytes)
 					) {
+						// příští spuštění metody znovu načte další byty
 						this.current_byte = -1;
-						System.out.println("Reader: reloading");
 					}
 				}
 				
 				if (bit == this.leftmostbit)
 				{
-					System.out.println('1');
 					return Boolean.TRUE;
 				}
 				else
 				{
-					System.out.println('0');
 					return Boolean.FALSE;
 				}
 			}
