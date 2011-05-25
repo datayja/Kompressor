@@ -203,6 +203,8 @@ public class Kompressor extends Thread
 			{
 				file_to_dekompress_tree_reader.close();
 			} catch (IOException e) { /* nezajímavá */ }
+			System.out.println(this.cmdIdentifier()+"sys: dekompressing "+metadata.dekompressedByteCount()+
+					" bytes long file from "+metadata.kompressedBitCount()+" bits");
 			
 			Reader reader = new Reader(file_to_dekompress_reader);
 			
@@ -255,7 +257,7 @@ public class Kompressor extends Thread
 					{
 						byte_counter++;
 						dekompressed_file_writer.write(current_node.getData());
-						System.out.print("new byte: "+current_node.getData());
+						// System.out.println("new byte: "+current_node.getData());
 						current_node = tree; // reset
 					}
 				}

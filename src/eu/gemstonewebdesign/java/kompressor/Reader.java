@@ -32,6 +32,10 @@ public class Reader
 			if (this.current_byte == -1)
 			{
 				this.read_bytes = this.reader.read(this.in);
+				for (byte b : this.in)
+				{
+					System.out.println(Writer.printBinary8(b));
+				}
 				this.current_byte++;
 				return this.read();
 			}
@@ -52,7 +56,7 @@ public class Reader
 					this.current_byte++;
 
 					if (
-						(this.current_byte == (Kompressor.read_byte_buffer_size - 1)) 
+						(this.current_byte == Kompressor.read_byte_buffer_size) 
 						||
 						(this.current_byte == this.read_bytes)
 					) {
@@ -63,10 +67,12 @@ public class Reader
 				
 				if (bit == this.leftmostbit)
 				{
+					//System.out.print(1);
 					return Boolean.TRUE;
 				}
 				else
 				{
+					//System.out.print(0);
 					return Boolean.FALSE;
 				}
 			}

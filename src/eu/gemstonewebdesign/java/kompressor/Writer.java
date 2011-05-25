@@ -34,7 +34,7 @@ public class Writer
 		if (this.current_count == 8)
 		{
 			this.output.write(this.current_byte);
-			System.out.println("new byte: "+printBinary8(this.current_byte));
+			// System.out.println("new byte: "+printBinary8(this.current_byte));
 			
 			this.reset();
 		}
@@ -46,7 +46,7 @@ public class Writer
 		{
 			this.current_byte = (byte) (this.current_byte << (8 - this.current_count));
 			this.output.write(this.current_byte);
-			System.out.println("flushing "+printBinary8(this.current_byte));
+			// System.out.println("flushing "+printBinary8(this.current_byte));
 			this.current_byte = 0;
 			this.reset();
 		}
@@ -65,7 +65,7 @@ public class Writer
 	}
 	
 	// test purposes only
-	protected String printBinary8(byte b)
+	static protected String printBinary8(byte b)
 	{
 		String bin = Integer.toBinaryString(b);
 		if (bin.length() > 8)
