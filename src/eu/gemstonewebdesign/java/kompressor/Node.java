@@ -16,7 +16,8 @@ public class Node implements Comparable<Node>, Serializable
 	private Node parent = null;
 	
 	/**
-	 * New leaf Node. 
+	 * New leaf Node.
+	 * 
 	 * @param data
 	 * @param weight
 	 */
@@ -31,7 +32,8 @@ public class Node implements Comparable<Node>, Serializable
 	}
 	
 	/**
-	 * New internal Node. 
+	 * New internal Node.
+	 * 
 	 * @param left
 	 * @param right
 	 */
@@ -47,24 +49,21 @@ public class Node implements Comparable<Node>, Serializable
 		this.right.setParent(this);
 	}
 	
+	@Override
+	public int compareTo(Node o)
+	{
+		long foreign_weight = o.getWeight();
+		if (this.weight < foreign_weight)
+			return -1;
+		else if (foreign_weight < this.weight)
+			return 1;
+		else
+			return 0;
+	}
+	
 	public Byte getData()
 	{
 		return data;
-	}
-
-	public long getWeight()
-	{
-		return weight;
-	}
-
-	public boolean isLeaf()
-	{
-		return this.leaf;
-	}
-	
-	public boolean isRoot()
-	{
-		return (this.parent == null);
 	}
 	
 	public Node getLeft()
@@ -72,36 +71,33 @@ public class Node implements Comparable<Node>, Serializable
 		return this.left;
 	}
 	
-	public Node getRight()
-	{
-		return this.right;
-	}
-	
 	public Node getParent()
 	{
 		return this.parent;
 	}
 	
+	public Node getRight()
+	{
+		return this.right;
+	}
+	
+	public long getWeight()
+	{
+		return weight;
+	}
+	
+	public boolean isLeaf()
+	{
+		return this.leaf;
+	}
+	
+	public boolean isRoot()
+	{
+		return this.parent == null;
+	}
+	
 	private void setParent(Node parent)
 	{
 		this.parent = parent;
-	}
-	
-	@Override
-	public int compareTo(Node o)
-	{
-		long foreign_weight = o.getWeight();
-		if ( this.weight < foreign_weight )
-		{
-			return -1;
-		}
-		else if ( foreign_weight < this.weight )
-		{
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
 	}
 }

@@ -8,6 +8,22 @@ import java.util.List;
 
 public class Console
 {
+	private static String[] checkFilenamesForMultipleOccurences(
+			String[] filenames)
+	{
+		List<String> checked_filenames = new ArrayList<String>();
+		for (String filename : filenames)
+		{
+			if (!checked_filenames.contains(filename))
+			{
+				checked_filenames.add(filename);
+			}
+		}
+		String[] names = new String[checked_filenames.size()];
+		checked_filenames.toArray(names);
+		return names;
+	}
+	
 	/**
 	 * @param args
 	 */
@@ -55,52 +71,59 @@ public class Console
 	{
 		boolean proceed = true;
 		long cmd_no = 0;
-		BufferedReader reader = new BufferedReader( new InputStreamReader( System.in ) );
+		BufferedReader reader = new BufferedReader(new InputStreamReader(
+				System.in));
 		do
 		{
 			cmd_no++;
 			
 			// parse input
-			System.out.print("["+cmd_no+"]cmd: ");
+			System.out.print("[" + cmd_no + "]cmd: ");
 			
 			try
 			{
 				ConsoleCmd cmd = ConsoleCmd.parse(reader.readLine(), cmd_no);
 				
 				String command = cmd.getCmd();
-				if ( command.equals("exit") )
+				if (command.equals("exit"))
 				{
 					proceed = false;
 				}
-				else if ( command.equals("kompress_single") )
+				else if (command.equals("kompress_single"))
 				{
 					if (cmd.countFileNames() < 1)
 					{
-						System.out.println("["+cmd_no+"]err: No file specified");
+						System.out.println("[" + cmd_no
+								+ "]err: No file specified");
 					}
 					else
 					{
 						String filename = cmd.fileName();
 						Kompressor kompressor = new Kompressor();
-						kompressor.setAction(KompressorAction.KOMPRESS, filename);
+						kompressor.setAction(KompressorAction.KOMPRESS,
+								filename);
 						kompressor.setTarget(filename);
 						kompressor.setMode(KompressorMode.FILE);
 						kompressor.assignCmdNo(cmd_no);
-						System.out.println("["+cmd_no+"]sys: Kompressing...");
+						System.out.println("[" + cmd_no
+								+ "]sys: Kompressing...");
 						kompressor.start();
 						kompressor.join();
 					}
 				}
-				else if ( command.equals("kompress_multi") )
+				else if (command.equals("kompress_multi"))
 				{
-					String[] filenames = checkFilenamesForMultipleOccurences(cmd.fileNames());
+					String[] filenames = checkFilenamesForMultipleOccurences(cmd
+							.fileNames());
 					Kompressor[] kompressors = new Kompressor[filenames.length];
 					int i = 0;
-					System.out.println("["+cmd_no+"]sys: Kompressing multiple files...");
+					System.out.println("[" + cmd_no
+							+ "]sys: Kompressing multiple files...");
 					for (String filename : filenames)
 					{
 						kompressors[i] = new Kompressor();
-						kompressors[i].setAction(KompressorAction.KOMPRESS, filename);
+						kompressors[i].setAction(KompressorAction.KOMPRESS,
+								filename);
 						kompressors[i].setTarget(filename);
 						kompressors[i].setMode(KompressorMode.FILE);
 						kompressors[i].assignCmdNo(cmd_no);
@@ -112,35 +135,41 @@ public class Console
 						kompressor.join();
 					}
 				}
-				else if ( command.equals("dekompress_single") )
+				else if (command.equals("dekompress_single"))
 				{
 					if (cmd.countFileNames() < 1)
 					{
-						System.out.println("["+cmd_no+"]err: No file specified");
+						System.out.println("[" + cmd_no
+								+ "]err: No file specified");
 					}
 					else
 					{
 						String filename = cmd.fileName();
 						Kompressor kompressor = new Kompressor();
-						kompressor.setAction(KompressorAction.DEKOMPRESS, filename);
+						kompressor.setAction(KompressorAction.DEKOMPRESS,
+								filename);
 						kompressor.setTarget(filename);
 						kompressor.setMode(KompressorMode.FILE);
 						kompressor.assignCmdNo(cmd_no);
-						System.out.println("["+cmd_no+"]sys: Dekompressing...");
+						System.out.println("[" + cmd_no
+								+ "]sys: Dekompressing...");
 						kompressor.start();
 						kompressor.join();
 					}
 				}
-				else if ( command.equals("dekompress_multi") )
+				else if (command.equals("dekompress_multi"))
 				{
-					String[] filenames = checkFilenamesForMultipleOccurences(cmd.fileNames());
+					String[] filenames = checkFilenamesForMultipleOccurences(cmd
+							.fileNames());
 					Kompressor[] kompressors = new Kompressor[filenames.length];
 					int i = 0;
-					System.out.println("["+cmd_no+"]sys: Dekompressing multiple files...");
+					System.out.println("[" + cmd_no
+							+ "]sys: Dekompressing multiple files...");
 					for (String filename : filenames)
 					{
 						kompressors[i] = new Kompressor();
-						kompressors[i].setAction(KompressorAction.DEKOMPRESS, filename);
+						kompressors[i].setAction(KompressorAction.DEKOMPRESS,
+								filename);
 						kompressors[i].setTarget(filename);
 						kompressors[i].setMode(KompressorMode.FILE);
 						kompressors[i].assignCmdNo(cmd_no);
@@ -154,41 +183,28 @@ public class Console
 				}
 				else
 				{
-					System.out.println("["+cmd_no+"]err: Unknown command");
+					System.out.println("[" + cmd_no + "]err: Unknown command");
 				}
 			}
 			catch (IOException e)
 			{
-				System.out.println("["+cmd_no+"]err: Read failed, retry");
+				System.out.println("[" + cmd_no + "]err: Read failed, retry");
 			}
 			catch (InterruptedException e)
 			{
-				System.out.println("["+cmd_no+"]err: " + e.getMessage());
+				System.out.println("[" + cmd_no + "]err: " + e.getMessage());
 				e.printStackTrace();
 			}
 		} while (proceed);
-
+		
 		try
 		{
 			reader.close();
 		}
-		catch (IOException e) {}
+		catch (IOException e)
+		{
+		}
 		
 		System.out.println("Kompressor exited peacefully");
-	}
-
-	private static String[] checkFilenamesForMultipleOccurences(String[] filenames)
-	{
-		List<String> checked_filenames = new ArrayList<String>();
-		for (String filename : filenames)
-		{
-			if ( ! checked_filenames.contains(filename))
-			{
-				checked_filenames.add(filename);
-			}
-		}
-		String[] names = new String[checked_filenames.size()];
-		checked_filenames.toArray(names);
-		return names;
 	}
 }

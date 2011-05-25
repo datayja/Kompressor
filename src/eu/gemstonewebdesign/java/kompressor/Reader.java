@@ -7,7 +7,8 @@ public class Reader
 {
 	private FileInputStream reader;
 	private byte[] in;
-	private int read_bytes = -2; // tato hodnota není vracena metodou read jako počet přečtených bytů
+	private int read_bytes = -2; // tato hodnota není vracena metodou read jako počet
+									// přečtených bytů
 	private int current_byte = -1;
 	private short current_bit = 0;
 	private final byte leftmostbit;
@@ -18,34 +19,28 @@ public class Reader
 		this.in = new byte[Kompressor.read_byte_buffer_size];
 		this.leftmostbit = (byte) (1 << 7);
 	}
-
+	
 	public Boolean read() throws IOException
 	{
 		if (this.read_bytes == -1)
-		{
 			// pokud už není co číst, vrátit null
 			return null;
-		}
-		else 
+		else
 		{
-			// pokud jsme na offsetu -1, načíst další dávku bytů 
+			// pokud jsme na offsetu -1, načíst další dávku bytů
 			if (this.current_byte == -1)
 			{
 				this.read_bytes = this.reader.read(this.in);
-				for (byte b : this.in)
-				{
-					System.out.println(Writer.printBinary8(b));
-				}
 				this.current_byte++;
 				return this.read();
 			}
 			// jinak čteme další bit z bajtu, který je na řadě
 			else
 			{
-				// najdeme si poslední bit
+				// najdeme si první bit
 				byte bit = (byte) (this.in[this.current_byte] & this.leftmostbit);
-
-				// posuneme doprava
+				
+				// posuneme doleva o jedno místo, aby se na první bit dostal další na řadě
 				this.in[this.current_byte] <<= 1;
 				this.current_bit++;
 				
@@ -54,27 +49,19 @@ public class Reader
 				{
 					this.current_bit = 0;
 					this.current_byte++;
-
-					if (
-						(this.current_byte == Kompressor.read_byte_buffer_size) 
-						||
-						(this.current_byte == this.read_bytes)
-					) {
+					
+					if (this.current_byte == Kompressor.read_byte_buffer_size
+							|| this.current_byte == this.read_bytes)
+					{
 						// příští spuštění metody znovu načte další byty
 						this.current_byte = -1;
 					}
 				}
 				
 				if (bit == this.leftmostbit)
-				{
-					//System.out.print(1);
 					return Boolean.TRUE;
-				}
 				else
-				{
-					//System.out.print(0);
 					return Boolean.FALSE;
-				}
 			}
 		}
 	}

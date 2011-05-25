@@ -71,7 +71,8 @@ public class Kompressor extends Thread
 			// bug fix suggested for the algorithm!
 			if (node.isRoot())
 			{
-				current_path = new Boolean[] { Boolean.TRUE };
+				current_path = new Boolean[]
+				{ Boolean.TRUE };
 				table.put(node.getData(), current_path);
 			}
 			else
@@ -88,7 +89,7 @@ public class Kompressor extends Thread
 			this.computeTableStep(node.getLeft(), path, table);
 			path.pop();
 			
-			// >>
+			//  >>
 			path.push(Boolean.TRUE); // right child
 			this.computeTableStep(node.getRight(), path, table);
 			path.pop();
@@ -100,7 +101,8 @@ public class Kompressor extends Thread
 		File file_to_dekompress = new File(file + Kompressor.extension_data);
 		FileInputStream file_to_dekompress_reader = null;
 		
-		File file_to_dekompress_tree = new File(file + Kompressor.extension_tree);
+		File file_to_dekompress_tree = new File(file
+				+ Kompressor.extension_tree);
 		ObjectInputStream file_to_dekompress_tree_reader = null;
 		
 		File dekompressed_file = new File(to);
@@ -116,29 +118,7 @@ public class Kompressor extends Thread
 				if (file_to_dekompress.canRead())
 				{
 					file_to_dekompress_reader = new FileInputStream(
-						file_to_dekompress);
-				}
-				else
-				{
-					System.err.println(this.cmdIdentifier()
-							+ "err: Unable to read input file: " + file);
-					return;
-				}
-			}
-			else
-			{
-				System.err.println(this.cmdIdentifier()
-						+ "err: Invalid input file: " + file);
-				return;
-			}
-
-			// test input file - metadata
-			if (file_to_dekompress_tree.isFile())
-			{
-				if (file_to_dekompress_tree.canRead())
-				{
-					file_to_dekompress_tree_reader = new ObjectInputStream(new FileInputStream(
-							file_to_dekompress_tree));
+							file_to_dekompress);
 				}
 				else
 				{
@@ -154,11 +134,32 @@ public class Kompressor extends Thread
 				return;
 			}
 			
-
-			// test output file
-			if ( ! dekompressed_file.exists())
+			// test input file - metadata
+			if (file_to_dekompress_tree.isFile())
 			{
-				if ( ! dekompressed_file.createNewFile())
+				if (file_to_dekompress_tree.canRead())
+				{
+					file_to_dekompress_tree_reader = new ObjectInputStream(
+							new FileInputStream(file_to_dekompress_tree));
+				}
+				else
+				{
+					System.err.println(this.cmdIdentifier()
+							+ "err: Unable to read input file: " + file);
+					return;
+				}
+			}
+			else
+			{
+				System.err.println(this.cmdIdentifier()
+						+ "err: Invalid input file: " + file);
+				return;
+			}
+			
+			// test output file
+			if (!dekompressed_file.exists())
+			{
+				if (!dekompressed_file.createNewFile())
 				{
 					System.err.println(this.cmdIdentifier()
 							+ "err: Could not create output file: " + to);
@@ -197,14 +198,20 @@ public class Kompressor extends Thread
 			System.out.println(this.cmdIdentifier() + "sys: Dekompressing");
 			
 			// start decompressing
-			Metadata metadata = (Metadata) file_to_dekompress_tree_reader.readObject(); 
+			Metadata metadata = (Metadata) file_to_dekompress_tree_reader
+					.readObject();
 			Node tree = metadata.tree();
-			try 
+			try
 			{
 				file_to_dekompress_tree_reader.close();
-			} catch (IOException e) { /* nezajímavá */ }
-			System.out.println(this.cmdIdentifier()+"sys: dekompressing "+metadata.dekompressedByteCount()+
-					" bytes long file from "+metadata.kompressedBitCount()+" bits");
+			}
+			catch (IOException e)
+			{ /* nezajímavá */
+			}
+			System.out.println(this.cmdIdentifier() + "sys: dekompressing "
+					+ metadata.dekompressedByteCount()
+					+ " bytes long target file from "
+					+ metadata.kompressedBitCount() + " bits long input file");
 			
 			Reader reader = new Reader(file_to_dekompress_reader);
 			
@@ -223,7 +230,7 @@ public class Kompressor extends Thread
 				// pro kontrolu konzistence dat
 				@SuppressWarnings("unused")
 				Boolean current_bit = null;
-				while ((current_bit = reader.read()) != null) 
+				while ((current_bit = reader.read()) != null)
 				{
 					bit_counter++;
 					byte_counter++;
@@ -231,22 +238,21 @@ public class Kompressor extends Thread
 			}
 			else
 			{
-				assert(current_node.getLeft() != null);
-				assert(current_node.getRight() != null);
+				assert current_node.getLeft() != null;
+				assert current_node.getRight() != null;
 				
 				Boolean current_bit = null;
 				
-				while (
-						((current_bit = reader.read()) != null)
-						&& (bit_counter < metadata.kompressedBitCount())
-						&& (byte_counter < metadata.dekompressedByteCount())
-				) {
+				while ((current_bit = reader.read()) != null
+						&& bit_counter < metadata.kompressedBitCount()
+						&& byte_counter < metadata.dekompressedByteCount())
+				{
 					if (current_bit)
 					{
 						// >>
 						current_node = current_node.getRight();
 					}
-					else 
+					else
 					{
 						// <<
 						current_node = current_node.getLeft();
@@ -263,8 +269,8 @@ public class Kompressor extends Thread
 				}
 			}
 			
-			// TODO: output info, check consistency
-			// TODO: write docs
+			System.out.println(this.cmdIdentifier()
+					+ "sys: Completed dekompressing");
 		}
 		catch (FileNotFoundException e)
 		{
@@ -280,7 +286,8 @@ public class Kompressor extends Thread
 		catch (ClassNotFoundException e)
 		{
 			// skvělý příklad toho, kdy je catch víceméně zbytečný, protože aby
-			// tenhle kód byl třeba, musel by někdo smazat kus aplikace, takže by stejně nefungovala
+			// tenhle kód byl třeba, musel by někdo smazat kus aplikace, takže by stejně
+			// nefungovala
 			e.printStackTrace();
 		}
 		finally
@@ -384,9 +391,9 @@ public class Kompressor extends Thread
 			}
 			
 			// test output file - metadata
-			if ( ! kompressed_file_tree.exists())
+			if (!kompressed_file_tree.exists())
 			{
-				if ( ! kompressed_file_tree.createNewFile())
+				if (!kompressed_file_tree.createNewFile())
 				{
 					System.err.println(this.cmdIdentifier()
 							+ "err: Could not create output file: " + to
@@ -435,20 +442,20 @@ public class Kompressor extends Thread
 			byte[] in = new byte[Kompressor.read_byte_buffer_size];
 			int bytes_read = 0;
 			
-			assert (file_to_kompress != null);
+			assert file_to_kompress != null;
 			
 			while ((bytes_read = file_to_kompress_reader.read(in)) != -1)
 			{
 				for (int i = 0; i < bytes_read; i++)
 				{
 					// increment byte counter for the read byte
-					Long current_counter = (Long) stats.get((Byte) in[i]);
+					Long current_counter = stats.get(in[i]);
 					if (current_counter == null)
 					{
 						current_counter = new Long(0);
 					}
 					current_counter++;
-					stats.put((Byte) in[i], current_counter);
+					stats.put(in[i], current_counter);
 				}
 			}
 			
@@ -458,9 +465,11 @@ public class Kompressor extends Thread
 			for (byte byte_id = Byte.MIN_VALUE; byte_id <= Byte.MAX_VALUE; byte_id += 1)
 			{
 				if (passed_overflow)
+				{
 					break;
+				}
 				
-				Long final_counter = (Long) stats.get((Byte) byte_id);
+				Long final_counter = stats.get(byte_id);
 				if (final_counter != null)
 				{
 					// System.out.println("Adding node for byte " + byte_id +
@@ -482,7 +491,7 @@ public class Kompressor extends Thread
 			
 			while (queue.size() > 1)
 			{
-				assert (queue.size() >= 2);
+				assert queue.size() >= 2;
 				
 				Node node_1 = queue.poll();
 				Node node_2 = queue.poll();
@@ -504,7 +513,7 @@ public class Kompressor extends Thread
 			// System.out.println("Polled for root: " + tree.getData() + ", " +
 			// tree.getWeight());
 			
-			assert (queue.size() == 0);
+			assert queue.size() == 0;
 			queue = null; // explicitly free resources
 			
 			System.out.println(this.cmdIdentifier()
@@ -548,14 +557,14 @@ public class Kompressor extends Thread
 			}
 			else
 			{
-				o_ratio = (double) ((double) o_byte_count / (double) file_bytes);
+				o_ratio = ((double) o_byte_count / (double) file_bytes);
 			}
 			System.out.print(this.cmdIdentifier() + "sys: Input file bytes: "
 					+ file_bytes + ", output file bits: " + o_bit_count + " ("
 					+ o_byte_count + " bytes)" + ", compression ratio: ");
 			System.out.format("%,.3f (%,.2f%%)%n", o_ratio, (o_ratio * 100));
 			
-			assert (kompressed_file_tree != null);
+			assert kompressed_file_tree != null;
 			
 			kompressed_file_tree_writer.writeObject(metadata);
 			
@@ -593,6 +602,7 @@ public class Kompressor extends Thread
 		}
 	}
 	
+	@Override
 	public void run()
 	{
 		if (this.mode == KompressorMode.FILE)
