@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Kompressor" default="compile" basedir=".">
+	<description>Simple compression program utilizing Huffman coding.</description>
+	<property name="src" location="src" />
+	<property name="bin" location="bin" />
+	<property name="doc" location="doc" />
+	<target name="init">
+		<mkdir dir="${bin}"/>
+	</target>
+	<target name="compile" depends="init" description="Compile the interpreter">
+		<javac debug="false" destdir="${bin}" srcdir="${src}" includes="**/*.java" classpath="${src}" />
+	</target>
+	<target name="run" depends="init,compile" description="Execute">
+		<java fork="true" classname="BrainFuck" classpath="${bin}" />
+	</target>
+	<target name="doc" depends="init" description="Generate documentation">
+		<javadoc
+			access="private"
+			sourcepath="${src}"
+			destdir="${doc}"
+			author="false"
+			version="false"
+			use="true"
+			windowtitle="Kompressor API"
+		>
+			<package name="eu.gemstonewebdesign.java.kompressor" />
+		</javadoc>
+	</target>
+</project>

@@ -3,9 +3,20 @@ package eu.gemstonewebdesign.java.kompressor;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * Pomocná třída pro zapisování do souboru po bitech. 
+ * 
+ * Je třeba na konci zápisu zavolat ještě metodu flush(), 
+ * protože třída bufferuje do 8 bitů a pak vypíše celý byte, 
+ * a pokud by se flush() nezavolalo, může se až 7 posledních 
+ * bitů ztratit v černé díře. 
+ */
 public class Writer
 {
-	// test purposes only
+	// tato metoda pomáhala odhalovat bugy
+	/**
+	 * @deprecated
+	 */
 	static protected String printBinary8(byte b)
 	{
 		String bin = Integer.toBinaryString(b);
@@ -50,11 +61,19 @@ public class Writer
 		this.output = output;
 	}
 	
+	/**
+	 * Počet zapsaných bitů. 
+	 * @return Počet zapsaných bitů
+	 */
 	public long bitCount()
 	{
 		return this.bit_count;
 	}
 	
+	/**
+	 * Vypsání zbytku bitového bufferu. 
+	 * @throws IOException
+	 */
 	public void flush() throws IOException
 	{
 		if (this.current_count != 0)
@@ -68,20 +87,30 @@ public class Writer
 		this.output.flush();
 	}
 	
+	/**
+	 * Resetování indexů po zápisu byte.
+	 */
 	private void reset()
 	{
 		this.current_byte = 0;
 		this.current_count = 0;
 	}
 	
+	/** 
+	 * Zapsání dalšího bitu do výstupu.
+	 * @param data
+	 * @throws IOException
+	 */
 	public void write(Boolean data) throws IOException
 	{
 		if (data)
 		{
+			// přidání jednoho jedničkového bitu na konec aktivního bytu
 			this.current_byte = (byte) (this.current_byte << 1 | 1);
 		}
 		else
 		{
+			// přidání jednoho nulového bitu na konec aktivního bytu
 			this.current_byte = (byte) (this.current_byte << 1);
 		}
 		this.current_count++;

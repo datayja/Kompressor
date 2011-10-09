@@ -3,6 +3,9 @@ package eu.gemstonewebdesign.java.kompressor;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+/**
+ * Pomocná třída pro čtení po bitech. 
+ */
 public class Reader
 {
 	private FileInputStream reader;
@@ -20,6 +23,11 @@ public class Reader
 		this.leftmostbit = (byte) (1 << 7);
 	}
 	
+	/**
+	 * Přečíst další bit. 
+	 * @return Další bit ze vstupního souboru
+	 * @throws IOException
+	 */
 	public Boolean read() throws IOException
 	{
 		if (this.read_bytes == -1)

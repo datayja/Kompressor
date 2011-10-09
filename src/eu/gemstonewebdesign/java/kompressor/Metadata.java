@@ -2,6 +2,10 @@ package eu.gemstonewebdesign.java.kompressor;
 
 import java.io.Serializable;
 
+/**
+ * Pomocná třída pro udržování metadat komprimovaného 
+ * souboru v serializované podobě. 
+ */
 final public class Metadata implements Serializable
 {
 	private static final long serialVersionUID = 1L;

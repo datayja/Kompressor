@@ -7,20 +7,89 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Pomocná třída pro parsování příkazů. 
+ */
 public class ConsoleCmd
 {
+	/**
+	 * Parsování příkazů z interaktivní konzole. 
+	 * @param cmdline
+	 * @param cmd_no
+	 * @return Rozparsovaný příkaz
+	 */
 	public static ConsoleCmd parse(String cmdline, long cmd_no)
 	{
 		// hladový regexp - řádek rozdělí co nejdelší řada whitespace znaků
 		String[] cmd_tokens = cmdline.split("\\s+");
 		
-		/*
-		 * for (String s : cmd_tokens)
-		 * {
-		 * System.out.println(s);
-		 * }
-		 */
-
+		return ConsoleCmd._parse(cmd_tokens, cmd_no);
+	}
+	
+	private String cmd;
+	
+	private List<String> fileNames = new ArrayList<String>();
+	
+	private ConsoleCmd()
+	{
+	}
+	
+	private ConsoleCmd(String cmd)
+	{
+		this.cmd = cmd.toLowerCase();
+	}
+	
+	/**
+	 * Počet souborů v příkazu. 
+	 * @return int
+	 */
+	public int countFileNames()
+	{
+		return this.fileNames.size();
+	}
+	
+	/**
+	 * Získání jediného jména souboru z příkazu. 
+	 * @return Jméno souboru
+	 */
+	public String fileName()
+	{
+		return this.fileNames.get(0);
+	}
+	
+	/**
+	 * Získání pole všech jmen souborů v příkazu. 
+	 * @return Jména souborů
+	 */
+	public String[] fileNames()
+	{
+		String[] fns = new String[this.fileNames.size()];
+		this.fileNames.toArray(fns);
+		return fns;
+	}
+	
+	/**
+	 * Získání identifikátoru příkazu. 
+	 * @return Identifikátor příkazu
+	 */
+	public String getCmd()
+	{
+		return this.cmd;
+	}
+	
+	/**
+	 * Parsovat argumenty programu. 
+	 * @param args
+	 * @param cmd_no
+	 * @return Rozparsovaný příkaz
+	 */
+	public static ConsoleCmd parseArguments(String[] args, long cmd_no)
+	{
+		return ConsoleCmd._parse(args, cmd_no);
+	}
+	
+	private static ConsoleCmd _parse(String[] cmd_tokens, long cmd_no)
+	{
 		String cmd_identifier = "unknown";
 		ConsoleCmd cmd = null;
 		
@@ -37,7 +106,7 @@ public class ConsoleCmd
 					|| cmd_tokens[0].equalsIgnoreCase("decompress")
 					|| cmd_tokens[0].equalsIgnoreCase("dekompress"))
 			{
-				// normalize the action name
+				// normalizování identifikátoru příkazu
 				if (cmd_tokens[0].equalsIgnoreCase("compress"))
 				{
 					cmd_tokens[0] = "kompress";
@@ -108,45 +177,10 @@ public class ConsoleCmd
 		}
 		else
 		{
-			// default - unknown
+			// výchozí - neznámý
 			cmd = new ConsoleCmd(cmd_identifier);
 		}
 		
 		return cmd;
-	}
-	
-	private String cmd;
-	
-	private List<String> fileNames = new ArrayList<String>();
-	
-	private ConsoleCmd()
-	{
-	}
-	
-	private ConsoleCmd(String cmd)
-	{
-		this.cmd = cmd.toLowerCase();
-	}
-	
-	public int countFileNames()
-	{
-		return this.fileNames.size();
-	}
-	
-	public String fileName()
-	{
-		return this.fileNames.get(0);
-	}
-	
-	public String[] fileNames()
-	{
-		String[] fns = new String[this.fileNames.size()];
-		this.fileNames.toArray(fns);
-		return fns;
-	}
-	
-	public String getCmd()
-	{
-		return this.cmd;
 	}
 }
